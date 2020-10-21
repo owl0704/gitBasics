@@ -4,6 +4,15 @@ class Catalogue {
     this.products = [];
   }
 
+  removeProductById(id) {
+    const removedProduct = this.findProductById(id);
+    if (removedProduct) {
+      this.products = this.products.filter(
+        (product) => product.id !== id // ***********
+      );
+    }
+    return removedProduct;
+  }
   findProductById(id) {
     const match = this.products.find((product) => id === product.id);
     return match;
