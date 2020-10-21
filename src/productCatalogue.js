@@ -3,7 +3,15 @@ class Catalogue {
     this.title = title;
     this.products = [];
   }
-
+  checkReorders() {
+    const result = { type: "Reorder", productIds: [] };
+    this.products.forEach( (p) => {
+      if (p.quantityInStock <= p.reorderLevel) {
+        result.productIds.push(p.id);
+      }
+    });
+    return result;
+  }
   removeProductById(id) {
     const removedProduct = this.findProductById(id);
     if (removedProduct) {
