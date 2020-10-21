@@ -5,19 +5,12 @@ class Catalogue {
   }
   checkReorders() {
     const result = { type: "Reorder", productIds: [] };
-    result.productIds = this.products
-      .filter((p) => p.quantityInStock <= p.reorderLevel)
-      .map((p) => p.id);
+    this.products.forEach( (p) => {
+      if (p.quantityInStock <= p.reorderLevel) {
+        result.productIds.push(p.id);
+      }
+    });
     return result;
-  }
-  removeProductById(id) {
-    const removedProduct = this.findProductById(id);
-    if (removedProduct) {
-      this.products = this.products.filter(
-        (product) => product.id !== id // ***********
-      );
-    }
-    return removedProduct;
   }
   findProductById(id) {
     const match = this.products.find((product) => id === product.id);
@@ -30,6 +23,31 @@ class Catalogue {
       return true;
     }
     return false;
+  }
+  batchAddProducts(batch) {
+    const productIDClash = batch.products.some(
+      (product) => this.findProductById(product.id) !== undefined
+    );
+    if (productIDClash) {
+      throw new Error("Bad Batch");
+    }
+    const noProductsAdded = batch.products
+      .filter((product) => product.quantityInStock > 0 )
+      .filter((p) => {
+        this.addProduct(p);
+        return true;
+      })
+      .reduce((acc, p) => acc + 1, 0);
+    return noProductsAdded;
+  }
+  removeProductById(id) {
+    const removedProduct = this.findProductById(id);
+    if (removedProduct) {
+      this.products = this.products.filter(
+        (product) => product.id !== id // ***********
+      );
+    }
+    return removedProduct;
   }
 }
 module.exports = Catalogue;
